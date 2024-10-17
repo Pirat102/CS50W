@@ -29,74 +29,67 @@
         
 
         <form action="https://www.google.com/search">
-            <div class="div_header">
-                <span>Find pages with...</span>
+            <div class="row">
+                <div class="div_header">
+                    <span>Find pages with...</span>
             </div>
-
             <div class="bar"></div>
-
-            <div class="todo_header">
-                <div>
+                <div class="todo_header">
                     To do this in the search box.
+            </div>
+            </div>
+        
+            <div class="row">
+            <div class="div_header">
+                    <label for="all_w">all these words:</label>
+            </div>
+            <div class="bar">
+                    <input type="text" name="as_q" id="all_w">
+            </div>
+            <div class="todo">
+                    Type the important words: tri-colour rat terrier
+            </div>
+            </div>
+
+            <div class="row">
+            <div class="div_header">
+                    <label for="exact_w">this exact word or phrase:</label>
+            </div>
+            <div class="bar">
+                    <input type="text" name="as_epq" id="exact_w">
+            </div>
+            <div class="todo">
+                    Put exact words in quotes: "rat terrier"
+            </div>
+            </div>
+
+            <div class="row">
+                <div class="div_header">
+                    <label for="any_w">any of these words:</label>
+            </div>
+                <div class="bar">
+                    <input type="text" name="as_oq" id="any_w">
                 </div>
-
+                <div class="todo">
+                    Type OR between all the words you want: miniature OR standard
+                </div>
             </div>
-
-            <div class="div_header">
-                <label for="all_w">all these words:</label>
-            </div>
-
-            <div class="bar">
-                <input type="text" name="as_q">
-            </div>
-
-            <div class="todo">
-                Type the important words: tri-colour rat terrier
-            </div>
-
-            <div class="div_header">
-                <label for="exact_w">this exact word or phrase:</label>
-            </div>
-
-            <div class="bar">
-                <input type="text" name="as_epq">
-            </div>
-            
-            <div class="todo">
-                Put exact words in quotes: "rat terrier"
-            </div>
-
-            <div class="div_header">
-                <label for="any_w">any of these words:</label>
-            </div>
-
-            <div class="bar">
-                <input type="text" name="as_oq">
-            </div>
-
-            <div class="todo">
-                Type OR between all the words you want: miniature OR standard
-            </div>
-
-            <div class="div_header">
-                <label for="none_w">none of these words:</label>
-            </div>
-
-            <div class="bar">
-                <input type="text" name="as_eq">
-            </div>
-            
-            <div class="todo">
-                Put a minus sign just before words that you don't want: -rodent, -"Jack Russell"
-            </div>
-
-            <div class="div_header">
+           
+            <div class="row">
+                <div class="div_header">
+                    <label for="none_w">none of these words:</label>
+                </div>
+                <div class="bar">
+                    <input type="text" name="as_eq" id="none_w">
+                </div>
+                <div class="todo">
+                    Put a minus sign just before words that you don't want: -rodent, -"Jack Russell"
+                </div>
             </div>
 
             <div class="action_button">
                 <input type="submit" value="Advanced Search">
             </div>
-           
         </form>
 
     </body>
