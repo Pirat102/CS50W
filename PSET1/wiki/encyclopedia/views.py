@@ -1,7 +1,9 @@
 from django.shortcuts import render
 import markdown2
+import re
 
 from . import util
+
 
 def convert_to_html(title):
     content = util.get_entry(title)
@@ -20,12 +22,26 @@ def index(request):
 def entry(request, title):
     html = convert_to_html(title)
     if html:
-        return render(request, f"encyclopedia/entry.html",{
+        return render(request, "encyclopedia/entry.html",{
             "title": title,
             "content": html
         })
     else:
-        return render(request, f"encyclopedia/error.html")
+        return render(request, "encyclopedia/error.html")
         
-def search(request, query):
-    ...
+def search(request):
+    query = request.GET.get("q")
+    entries = util.list_entries()
+    matches = []
+    for title in entries:
+        if query.lower() == title.lower():
+            return entry(request, title)
+        else:
+            match = re.search(query.lower(), title.lower())
+            if match:
+                matches.append(title)
+    return render(request, "encyclopedia/index.html", {
+        "entries": matches
+    })
+
+  
