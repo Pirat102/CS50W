@@ -44,4 +44,19 @@ def search(request):
         "entries": matches
     })
 
-  
+def add(request):
+    title = request.GET.get("title")
+    content = request.GET.get("content")
+    if title and content:
+        if title in util.list_entries():
+            return render(request, "encyclopedia/error.html")
+        util.save_entry(title, content)
+        return entry(request, title)
+
+    return render(request, "encyclopedia/add.html")
+    
+def edit(request, title):
+    return render(request, "encyclopedia/add.html", {
+        "title": title,
+        "content": util.get_entry(title)
+    })

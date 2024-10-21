@@ -4,8 +4,12 @@
     {{ title }}
 {% endblock %}
 
-{% block body %}
-    <h1>{{content |safe}}</h1>
+{% block nav %}
+<a href="{% url 'edit' title %}">Edit</a>
+{% endblock %}
 
+{% block body %}
+
+    {{content |safe}}
 
 {% endblock %}
