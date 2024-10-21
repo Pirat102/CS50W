@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import markdown2
 import re
+from random import choice
 
 from . import util
 
@@ -59,8 +60,13 @@ def edit(request, title):
     if request.method == "POST":
         new_content = request.POST.get("content")
         util.save_entry(title, new_content)
-        return entry(request, title)
+        return redirect('entry', title)
     return render(request, "encyclopedia/add.html", {
         "title": title,
         "content": util.get_entry(title)
     })
+
+def random(request):
+    random_page = choice(util.list_entries())
+    return redirect('entry', random_page)
+
