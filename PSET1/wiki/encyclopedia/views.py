@@ -45,9 +45,9 @@ def search(request):
     })
 
 def add(request):
-    title = request.GET.get("title")
-    content = request.GET.get("content")
-    if title and content:
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
         if title in util.list_entries():
             return render(request, "encyclopedia/error.html")
         util.save_entry(title, content)
@@ -56,6 +56,10 @@ def add(request):
     return render(request, "encyclopedia/add.html")
     
 def edit(request, title):
+    if request.method == "POST":
+        new_content = request.POST.get("content")
+        util.save_entry(title, new_content)
+        return entry(request, title)
     return render(request, "encyclopedia/add.html", {
         "title": title,
         "content": util.get_entry(title)
