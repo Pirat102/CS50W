@@ -13,7 +13,6 @@ def convert_to_html(title):
     else:
         return markdown2.markdown(content)
 
-
 def index(request):
 
     return render(request, "encyclopedia/index.html", {
