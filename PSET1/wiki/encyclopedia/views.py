@@ -27,7 +27,9 @@ def entry(request, title):
             "content": html
         })
     else:
-        return render(request, "encyclopedia/error.html")
+        return render(request, "encyclopedia/error.html",{
+            "error": "Requested page was not found."
+                      })
         
 def search(request):
     query = request.GET.get("q")
@@ -49,9 +51,11 @@ def add(request):
         title = request.POST.get("title")
         content = request.POST.get("content")
         if title in util.list_entries():
-            return render(request, "encyclopedia/error.html")
+            return render(request, "encyclopedia/error.html",{
+            "error": "Page with this title already exists."
+                      })
         util.save_entry(title, content)
-        return entry(request, title)
+        return redirect('entry', title)
 
     return render(request, "encyclopedia/add.html")
     
