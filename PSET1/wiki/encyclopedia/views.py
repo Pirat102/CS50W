@@ -37,7 +37,7 @@ def search(request):
     matches = []
     for title in entries:
         if query.lower() == title.lower():
-            return entry(request, title)
+            return redirect('entry', title)
         else:
             match = re.search(query.lower(), title.lower())
             if match:
