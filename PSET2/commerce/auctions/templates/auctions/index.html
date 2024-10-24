@@ -3,5 +3,20 @@
 {% block body %}
     <h2>Active Listings</h2>
 
+    <div class="row row-cols-1 row-cols-md-5 g-3">
+        {% for auction in auctions %}
+
+
+        <div class="card text-center mb-3" style="width: 18rem;">
+            <img src="{{auction.photo}}" class="card-img-top" alt="auction.title">
+            <div class="card-body">
+              <h5 class="card-title">{{auction.title}}</h5>
+              <p class="card-text">${{auction.price}}</p>
+              <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+            
+        {% endfor %}
+    </div> 
     TODO
 {% endblock %}
