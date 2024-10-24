@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import User, AuctionListing
@@ -64,3 +64,28 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def create(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        price = request.POST["price"]
+        photo = request.POST["photo"]
+        print(photo)
+        if photo == "":
+            photo = "https://imgs.search.brave.com/snFrjnmaTsGk9oDUpcYT9fZw_OkjcEk_uzI-oD46Wrg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxWnlPUEg0YXlM/LmpwZw"
+            
+        owner = request.user
+        newlisting = AuctionListing(
+            title = title,
+            description = description,
+            price = price,
+            photo = photo,
+            owner = owner
+        )
+        newlisting.save()
+        
+        return redirect(index)
+    else:
+        return render(request, "auctions/create.html")
