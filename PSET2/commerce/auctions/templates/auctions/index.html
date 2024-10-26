@@ -3,6 +3,17 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+    <form method="GET">
+        <select name="category" class="form-select form-select-lg mb-3">
+            <option value="" selected>Choose a category</option>
+            {% for category in categories %}
+                <option value={{category.id}}>{{category}}</option>
+            {%endfor%}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+      
     <div class="container">
         <div class="row">
             {% for auction in auctions %}
@@ -12,8 +23,8 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ auction.title }}</h5>
                                 <p class="card-text">{{ auction.description|first_sentence }}</p>
-                                <p class="card-text">${{ auction.price }}</p>
-                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                                <p class="card-text"><b>${{ auction.price }}</b></p>
+                                <a href={% url 'auction' auction.id %} class="btn btn-primary">Open listing</a>
                             </div>
                     </div>
                 </div>

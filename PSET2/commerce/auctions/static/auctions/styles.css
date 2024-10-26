@@ -7,3 +7,12 @@ body {
     object-fit: cover;  /* Ensure the image covers the area without distortion */
     object-position: center;  /* Center the image within the specified area */
 }
+.lower-container{
+    display:inline-block;
+}
+.bids{
+    
+}
+.comments{
+    justify-content: end;
+}
