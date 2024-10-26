@@ -3,8 +3,16 @@
 {% block body %}
 <div class="container">
     <div class="header">
+
+        {% if not auction.active %}
+            <h1> Auction closed </h1>
+        {%if winner.user == user %}
+            <h3> **Congratulations {{user}} you won the auction!** </h3>
+            {% endif %}
+            <br></br>
+        {%endif%}
         
-        <h2>Listing: {{title}} </h2>
+        <h2>Listing: {{auction.title}} </h2>
         {% if user.is_authenticated %}
         <form method="POST"> 
             {% csrf_token %}
@@ -13,11 +21,11 @@
             {% else %}
                 <button type="submit" name="add-watchlist" class="btn btn-outline-primary">Watchlist</button>
             {%endif%}
-            {% if owner == user %}
-                {% if active%}
+            {% if auction.owner == user %}
+                {% if auction.active %}
                     <button type="submit" name="deactivate" class="btn btn-success">Active</button>
                 {% else %}
-                    <button type="submit" name="activate" class="btn btn-danger">Close auction</button>
+                    <button type="submit" name="activate" class="btn btn-danger">Closed</button>
                 {% endif %}
             {% endif %}
             <br></br>
@@ -25,16 +33,17 @@
         {% endif %}
     </div>
 
+
         <div class="card mb-3" style="max-width: 920px;">
             
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src={{photo}} class="img-fluid rounded-start h-100" alt={{title}}>
+                    <img src={{auction.photo}} class="img-fluid rounded-start h-100" alt={{auction.title}}>
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                    <h5 class="card-title">{{title}}</h5>
-                    <p class="card-text">{{description}}</p>
+                    <h5 class="card-title">{{auction.title}}</h5>
+                    <p class="card-text">{{auction.description}}</p>
                     </div>
                 </div>
             </div>
@@ -42,11 +51,16 @@
             <div class="row">
                 <!-- Bids Section -->
                 <div class="col-md-4">
-                    <h4> ${{price}} </h4>
-                    {% for bid in bids %}
-                    <p> {{bid}}BID HISTORY </p>
-                    {% endfor %}
-                    {% if user.is_authenticated %}
+                    <h4> ${{auction.price}} </h4>
+                    <div class="bid-history">
+                        <h5> Bid History: </h5>
+                            <ul>
+                            {% for bid in bids %}
+                            <li> ${{bid.bid}} <small>by</small> {{bid.user}}  <small>on {{bid.created_at|date:"l H:i:s"}}</small> </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% if user.is_authenticated and auction.active %}
                     <form method="POST">
                         {% csrf_token %} 
                         <div class="input-group mb-3">
@@ -58,9 +72,9 @@
                     <div class="footer">
                         <h5> Details </h5>
                         <ul>
-                            <li> Listedy by: {{owner}} </li>
-                            <li> Category: {% if category %} 
-                                {{category}}
+                            <li> Listedy by: {{auction.owner}} </li>
+                            <li> Category: {% if auction.category %} 
+                                {{auction.category}}
                                 {% else  %}
                                 No Category Listed
                             </li>
@@ -71,10 +85,13 @@
         
                 <!-- Comments Section -->
                 <div class="col-md-6 comments ">
+                    <h5> Comment Section </h5>
+                    <ul>
                     {% for com in comments %}
-                        <p><b>{{com.author}}</b>: {{com.comment}}</p>
+                        <li><b>{{com.author}}</b>: {{com.comment}}</li>
                     {% endfor %}
-                    {% if user.is_authenticated %}
+                    </ul>
+                    {% if user.is_authenticated and auction.active %}
                     <form method="POST">
                         {% csrf_token %} 
                         <div class="input-group mb-3">

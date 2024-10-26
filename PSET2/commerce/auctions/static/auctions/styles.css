@@ -13,3 +13,6 @@ body {
     overflow-y: auto;
     max-height: 220px;
 }
+.bid-history{
+    padding: 5px
+}

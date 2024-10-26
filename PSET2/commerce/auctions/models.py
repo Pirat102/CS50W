@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
+
 
 
 class User(AbstractUser):
@@ -15,9 +17,10 @@ class Bid(models.Model):
     bid = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", null=True, blank=True)
     listing = models.ForeignKey("AuctionListing", on_delete=models.CASCADE, related_name="bids", null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self): 
-        return f"{self.bid} {self.user}"
+        return f"{self.bid} {self.user} {self.created_at}"
 
 
 class AuctionListing(models.Model):
@@ -29,10 +32,17 @@ class AuctionListing(models.Model):
     category = models.ForeignKey(Category, blank=True, null=True, related_name="category_name", on_delete=models.CASCADE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
     watchlist = models.ManyToManyField(User, blank=True, null=True, related_name="watchlist")
-    bid = models.ForeignKey(Bid,on_delete=models.SET_NULL, null=True, blank=True, related_name="last_bid")
     
     def __str__(self): 
         return f"ID: {self.id} Title: {self.title} Price: {self.price} Owner: {self.owner}"
+    
+    def update_price(self):
+        highest_bid = self.bids.order_by("-bid").first()
+        if highest_bid:
+            self.price = highest_bid.bid
+            self.current_bid = highest_bid
+            self.save()
+        
     
     
 class Comment(models.Model):

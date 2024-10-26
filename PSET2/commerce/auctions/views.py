@@ -25,12 +25,12 @@ def index(request):
 def login_view(request):
     if request.method == "POST":
 
-        # Attempt to sign user in
+        ## Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
 
-        # Check if authentication successful
+        ## Check if authentication successful
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
@@ -52,7 +52,7 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
-        # Ensure password matches confirmation
+        ## Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
@@ -60,7 +60,7 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new user
+        ## Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
@@ -76,31 +76,29 @@ def register(request):
 
 def create(request):
     if request.method == "POST":
-        title = request.POST["title"]
-        description = request.POST["description"]
-        price = request.POST["price"]
         photo = request.POST["photo"]
         category = request.POST["category"]
-        print(photo)
         if photo == "":
             photo = "https://imgs.search.brave.com/snFrjnmaTsGk9oDUpcYT9fZw_OkjcEk_uzI-oD46Wrg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxWnlPUEg0YXlM/LmpwZw"
-            
-        owner = request.user
         
-        # Assign Category object to a variable
-        category_name = Category.objects.get(category=category)
+        ## Assign Category object to a variable
+        if category != "":
+            category_name = Category.objects.get(category=category)
+        else:
+            category_name = None
         
         newlisting = AuctionListing(
-            title = title,
-            description = description,
-            price = price,
+            title = request.POST["title"],
+            description = request.POST["description"],
+            price = request.POST["price"],
             photo = photo,
             category = category_name,
-            owner = owner
+            owner = request.user
         )
         newlisting.save()
         
         return redirect(index)
+    
     else:
         categories = Category.objects.all().order_by("category")
         return render(request, "auctions/create.html",{
@@ -111,12 +109,9 @@ def auction(request, id):
     auction = AuctionListing.objects.get(id = id)
     comments = Comment.objects.all()
     
-    if auction.bid:
-        auction.price = auction.bid.bid
-        
     min_price = round(auction.price +1, 2)
     
-    # Check if user is in auction watchlist. Return Bool
+    ## Check if user is in auction watchlist. Return Bool
     watchlist = auction.watchlist.filter(id=request.user.id).exists()
     
     if request.method == "POST":
@@ -142,30 +137,24 @@ def auction(request, id):
                 comment=request.POST["comment"],
                 listing=auction)
  
-        
+        ## Add bid and update price
         if "bid" in request.POST:
             bid = Bid(bid=request.POST["bid"], user=request.user, listing=auction)
             bid.save()
-            auction.bid = bid
-            auction.save()
-          
             
+            auction.update_price()
+          
         return redirect('auction', id=auction.id)
     
-    return render(request, "auctions/auction.html",{
-        "title": auction.title,
-        "description": auction.description,
-        "price": auction.price,
-        "min_price": min_price,
-        "photo": auction.photo,
-        "active": auction.active,
-        "category": auction.category,
-        "owner": auction.owner,
-        "watchlist": watchlist,
-        "comments": comments,
-    
-        
-    })
+    else:
+        return render(request, "auctions/auction.html",{
+            "auction": auction,
+            "min_price": min_price,
+            "watchlist": watchlist,
+            "comments": comments,
+            "bids": auction.bids.all(),
+            "winner": auction.bids.order_by("created_at").last()
+        })
 
 def watchlist(request):
     user = request.user
