@@ -110,6 +110,10 @@ def create(request):
 def auction(request, id):
     auction = AuctionListing.objects.get(id = id)
     comments = Comment.objects.all()
+    
+    if auction.bid:
+        auction.price = auction.bid.bid
+        
     min_price = round(auction.price +1, 2)
     
     # Check if user is in auction watchlist. Return Bool
@@ -131,6 +135,7 @@ def auction(request, id):
             auction.active = True
             auction.save()
             
+        ## Add comment
         if "comment" in request.POST:
             Comment.objects.create(
                 author=request.user,
@@ -138,9 +143,12 @@ def auction(request, id):
                 listing=auction)
  
         
-        
         if "bid" in request.POST:
-            pass
+            bid = Bid(bid=request.POST["bid"], user=request.user, listing=auction)
+            bid.save()
+            auction.bid = bid
+            auction.save()
+          
             
         return redirect('auction', id=auction.id)
     
@@ -154,7 +162,7 @@ def auction(request, id):
         "category": auction.category,
         "owner": auction.owner,
         "watchlist": watchlist,
-        "comments": comments
+        "comments": comments,
     
         
     })

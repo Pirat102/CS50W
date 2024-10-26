@@ -1,0 +1,94 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="header">
+        
+        <h2>Listing: {{title}} </h2>
+        {% if user.is_authenticated %}
+        <form method="POST"> 
+            {% csrf_token %}
+            {% if watchlist %}
+                <button type="submit" name="remove-watchlist" class="btn btn-danger">Remove Watchlist</button>
+            {% else %}
+                <button type="submit" name="add-watchlist" class="btn btn-outline-primary">Watchlist</button>
+            {%endif%}
+            {% if owner == user %}
+                {% if active%}
+                    <button type="submit" name="deactivate" class="btn btn-success">Active</button>
+                {% else %}
+                    <button type="submit" name="activate" class="btn btn-danger">Close auction</button>
+                {% endif %}
+            {% endif %}
+            <br></br>
+        </form> 
+        {% endif %}
+    </div>
+
+        <div class="card mb-3" style="max-width: 920px;">
+            
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src={{photo}} class="img-fluid rounded-start h-100" alt={{title}}>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <!-- Bids Section -->
+                <div class="col-md-4">
+                    <h4> ${{price}} </h4>
+                    {% for bid in bids %}
+                    <p> {{bid}}BID HISTORY </p>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                    <form method="POST">
+                        {% csrf_token %} 
+                        <div class="input-group mb-3">
+                            <button type="submit" class="btn btn-outline-secondary">Place Bid</button>
+                            <input type="number" name="bid" min={{min_price}} step="0.50" placeholder="${{min_price}}" required>
+                        </div>
+                    </form>
+                    {% endif %}
+                    <div class="footer">
+                        <h5> Details </h5>
+                        <ul>
+                            <li> Listedy by: {{owner}} </li>
+                            <li> Category: {% if category %} 
+                                {{category}}
+                                {% else  %}
+                                No Category Listed
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+        
+                <!-- Comments Section -->
+                <div class="col-md-6 comments ">
+                    {% for com in comments %}
+                        <p><b>{{com.author}}</b>: {{com.comment}}</p>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                    <form method="POST">
+                        {% csrf_token %} 
+                        <div class="input-group mb-3">
+                            <button type="submit" class="btn btn-outline-secondary">Comment</button>
+                            <input name="comment" ></input>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+
+            </div>
+                
+</div>
+
+
+
+{% endblock %}
