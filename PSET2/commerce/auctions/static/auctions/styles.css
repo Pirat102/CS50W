@@ -2,17 +2,14 @@ body {
     padding: 10px;
 }
 .custom-img {
-    width: 100%;  /* Make the image take the full width of the card */
-    height: 500px;  /* Set a specific height for the images */
-    object-fit: cover;  /* Ensure the image covers the area without distortion */
-    object-position: center;  /* Center the image within the specified area */
+    width: 100%;  
+    height: 500px; 
+    object-fit: cover;  
+    object-position: center;  
 }
-.lower-container{
-    display:inline-block;
-}
-.bids{
-    
-}
-.comments{
-    justify-content: end;
+
+.comments {
+    word-wrap: break-word; 
+    overflow-y: auto;
+    max-height: 220px;
 }
