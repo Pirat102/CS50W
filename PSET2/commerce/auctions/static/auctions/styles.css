@@ -13,6 +13,8 @@ body {
     overflow-y: auto;
     max-height: 220px;
 }
-.bid-history{
-    padding: 5px
+
+.card-body {
+    display: flex;
+    flex-direction: column;
 }

@@ -24,8 +24,7 @@
         
         <div class="input-group mb-3">
             <span class="input-group-text">$</span>
-            <span class="input-group-text">0.00</span>
-            <input type="number" name="price" step="0.01" class="form-control" aria-label="Dollar amount (with dot and two decimal places)" required>
+            <input type="number" min="1" name="price" step="0.50" class="form-control" placeholder="$1.00" required>
           </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

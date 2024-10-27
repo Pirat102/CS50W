@@ -3,7 +3,6 @@
 {% block body %}
 <div class="container">
     <div class="header">
-
         {% if not auction.active %}
             <h1> Auction closed </h1>
         {%if winner.user == user %}
@@ -34,76 +33,73 @@
     </div>
 
 
-        <div class="card mb-3" style="max-width: 920px;">
-            
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src={{auction.photo}} class="img-fluid rounded-start h-100" alt={{auction.title}}>
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                    <h5 class="card-title">{{auction.title}}</h5>
-                    <p class="card-text">{{auction.description}}</p>
-                    </div>
+    <div class="card mb-3" style="max-width: 920px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src={{auction.photo}} class="img-fluid rounded-start h-100" alt={{auction.title}}>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                <h5 class="card-title">{{auction.title}}</h5>
+                <p class="card-text">{{auction.description}}</p>
                 </div>
             </div>
         </div>
-            <div class="row">
-                <!-- Bids Section -->
-                <div class="col-md-4">
-                    <h4> ${{auction.price}} </h4>
-                    <div class="bid-history">
-                        <h5> Bid History: </h5>
-                            <ul>
-                            {% for bid in bids %}
-                            <li> ${{bid.bid}} <small>by</small> {{bid.user}}  <small>on {{bid.created_at|date:"l H:i:s"}}</small> </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% if user.is_authenticated and auction.active %}
-                    <form method="POST">
-                        {% csrf_token %} 
-                        <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-outline-secondary">Place Bid</button>
-                            <input type="number" name="bid" min={{min_price}} step="0.50" placeholder="${{min_price}}" required>
-                        </div>
-                    </form>
-                    {% endif %}
-                    <div class="footer">
-                        <h5> Details </h5>
-                        <ul>
-                            <li> Listedy by: {{auction.owner}} </li>
-                            <li> Category: {% if auction.category %} 
-                                {{auction.category}}
-                                {% else  %}
-                                No Category Listed
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-        
-                <!-- Comments Section -->
-                <div class="col-md-6 comments ">
-                    <h5> Comment Section </h5>
-                    <ul>
-                    {% for com in comments %}
-                        <li><b>{{com.author}}</b>: {{com.comment}}</li>
-                    {% endfor %}
-                    </ul>
-                    {% if user.is_authenticated and auction.active %}
-                    <form method="POST">
-                        {% csrf_token %} 
-                        <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-outline-secondary">Comment</button>
-                            <input name="comment" ></input>
-                        </div>
-                    </form>
-                    {% endif %}
-                </div>
-
+    </div>
+    <div class="row">
+        <!-- Bids Section -->
+        <div class="col-md-4">
+            <h4> ${{auction.price}} </h4>
+            <div class="bid-history">
+                <h5> Bid History: </h5>
+                <ul>
+                {% for bid in bids %}
+                <li> ${{bid.bid}} <small>by</small> {{bid.user}}  <small>on {{bid.created_at|date:"l H:i:s"}}</small> </li>
+                {% endfor %}
+                </ul>
             </div>
-                
+            {% if user.is_authenticated and auction.active %}
+            <form method="POST">
+                {% csrf_token %} 
+                <div class="input-group mb-3">
+                    <button type="submit" class="btn btn-outline-secondary">Place Bid</button>
+                    <input type="number" name="bid" min={{min_price}} step="0.50" placeholder="${{min_price}}" required>
+                </div>
+            </form>
+            {% endif %}
+            <div class="footer">
+                <h5> Details </h5>
+                <ul>
+                    <li> Listedy by: {{auction.owner}} </li>
+                    <li> Category: {% if auction.category %} 
+                        {{auction.category}}
+                        {% else  %}
+                        No Category Listed
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="col-md-6 comments ">
+            <h5> Comment Section </h5>
+            <ul>
+            {% for com in comments %}
+                <li><b>{{com.author}}</b>: {{com.comment}}</li>
+            {% endfor %}
+            </ul>
+            {% if user.is_authenticated and auction.active %}
+            <form method="POST">
+                {% csrf_token %} 
+                <div class="input-group mb-3">
+                    <button type="submit" class="btn btn-outline-secondary">Comment</button>
+                    <input name="comment" ></input>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 
