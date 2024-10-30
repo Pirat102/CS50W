@@ -1,0 +1,36 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="profile">
+    <div>
+    <h3 class="username"> {{owner}} </h3>
+    {% if user.is_authenticated and user.id != owner.id %}
+        <button id="follow" data-user-id={{owner.id}}>
+            {% if is_following %} Unfollow {% else %} Follow {% endif %}
+        </button>
+        
+    {% else %}
+    <button disabled> Follow </button>
+    {% endif %}
+    </div>
+    <a> {{owner.following}}Following </a>
+    <a> {{owner.followers}}Followers </a>
+</div>
+
+<div class="feed">
+    {% for post in posts%}
+    <div class="post"> 
+        <b> {{owner}} </b>
+        <span> {{post.timestamp}} </span>
+        <p> {{post.body}} </p> 
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/file.js' %}?v={% now 'U' %}"></script>
+{% endblock %}

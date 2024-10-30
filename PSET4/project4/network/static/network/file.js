@@ -1,42 +1,59 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("JS LOADED");
-
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(',');
-      for (let i = 0; i < cookies.lenght; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.lenght + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.lenght + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-  const csrftoken = getCookie('csrftoken');
-  console.log(csrftoken);
-
-  document.getElementById('post-form').addEventListener("submit", function(event) {
-    event.preventDefault();
+  // Check if element exist. This is the way to handle multiple HTML files
+  const postForm = document.getElementById('post-form');
+  if (postForm) {
+    // Create new post
+    postForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+    // Get input
     const content = document.getElementById('post-content').value;
     console.log(`element ${content}`);
 
     fetch('/create', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken')
-      },
       body: JSON.stringify({body: content})
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Django response', data);
+      console.log('Django response:', data);
+      // Clear textarea
+      document.getElementById('post-content').value = ''
     })
     .catch(error => {
       console.error('Error:', error);
     })
   });
+  };
+
+
+  // Follow/Unfollow
+  const followBtn = document.querySelectorAll('#follow')
+  if (followBtn) {
+    followBtn.forEach(button =>{
+      button.addEventListener('click', function() {
+        console.log('Clicked');
+        const userId = button.getAttribute('data-user-id');
+        fetch(`/following/${userId}`,{
+          method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Django response:', data);
+          if (data.status === "success") {
+            button.textContent = data.is_following ? "Unfollow" : "Follow";
+          } else {
+              console.error("Error updating follow status");
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        })
+
+      });
+    });
+  };
+
+
+
 });
+  
