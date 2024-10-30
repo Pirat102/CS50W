@@ -6,13 +6,21 @@ from django.urls import reverse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
+
 
 from .models import User, Post
 
 
 def index(request):
+    posts = Post.objects.all().order_by("-timestamp")
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
     return render(request, "network/index.html", {
-        "posts": Post.objects.order_by("-timestamp")[:10]
+        "paginator": paginator,
+        "page_data": page
     })
 
 
@@ -86,7 +94,7 @@ def create_post(request):
 def user_profile(request, id):
     owner = User.objects.get(pk=id)
     posts = Post.objects.filter(user=owner).order_by("-timestamp")
-    is_following = owner.following.filter(pk=request.user.id).exists()
+    is_following = request.user.following.filter(pk=owner.id).exists()
     return render(request, "network/profile.html",{
         "owner": owner,
         "posts": posts,
@@ -95,7 +103,7 @@ def user_profile(request, id):
 
 @csrf_exempt
 @login_required
-def following(request, id):
+def is_following(request, id):
     user = request.user
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
@@ -109,3 +117,14 @@ def following(request, id):
         is_following = True
     
     return JsonResponse({"status": "success","is_following": is_following})
+
+def following(request):
+    following_users = request.user.following.all()
+    ## Get post where user in following_users
+    page = Post.objects.filter(user__in=following_users).order_by("-timestamp")[:10]
+    return render(request, "network/index.html", {
+        "page_data": page
+    })
+    
+def edit_post(request):
+    ...

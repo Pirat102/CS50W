@@ -17,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       console.log('Django response:', data);
       // Clear textarea
-      document.getElementById('post-content').value = ''
+      document.getElementById('post-content').value = '';
+      // Refresh the page
+      location.reload();
     })
     .catch(error => {
       console.error('Error:', error);
@@ -33,14 +35,14 @@ document.addEventListener('DOMContentLoaded', function() {
       button.addEventListener('click', function() {
         console.log('Clicked');
         const userId = button.getAttribute('data-user-id');
-        fetch(`/following/${userId}`,{
+        fetch(`/is_following/${userId}`,{
           method: 'POST'
         })
         .then(response => response.json())
         .then(data => {
           console.log('Django response:', data);
           if (data.status === "success") {
-            button.textContent = data.is_following ? "Unfollow" : "Follow";
+            button.innerHTML = data.is_following ? "Unfollow" : "Follow";
           } else {
               console.error("Error updating follow status");
           }
@@ -48,12 +50,20 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
           console.error('Error:', error);
         })
-
       });
     });
   };
 
+  // Edit post
+  const editPost = document.querySelectorAll('#edit-post')
+  if (editPost) {
+    editPost.forEach(button => {
+      button.addEventListener('click', () => {
+        console.log('Clicked')
+      })
+    })
+  }
 
-
+  
 });
   
