@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   };
 
-
   // Follow/Unfollow
   const followBtn = document.querySelectorAll('#follow')
   if (followBtn) {
@@ -55,14 +54,57 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   // Edit post
-  const editPost = document.querySelectorAll('#edit-post')
-  if (editPost) {
-    editPost.forEach(button => {
+  const editButtons = document.querySelectorAll('.edit-button')
+  if (editButtons) {
+    editButtons.forEach(button => {
       button.addEventListener('click', () => {
-        console.log('Clicked')
+        toggleEdit(button);
+      });
+    });
+  }
+  // Toogle between Edit/Save on user's posts
+  function toggleEdit(button) {
+    const postId = button.getAttribute('data-post-id')
+    const postElement = document.querySelector(`.post[data-post-id='${postId}']`)
+    const postBody = postElement.querySelector('.post-body')
+    if (button.textContent.trim() === 'Edit') {
+      postBody.style.display = 'none'
+      // Create textarea and add text to it
+      const textArea = document.createElement('textarea')
+      textArea.value = `${postBody.textContent}`
+
+      // Add new element, after original element
+      postBody.insertAdjacentElement('afterend', textArea)
+      // Focus cursor on the end of existing text
+      textArea.focus();
+      textArea.selectionStart = textArea.selectionEnd = textArea.value.length
+      button.textContent = 'Save';
+    } else {
+      // Get value from new element, add it to the original element
+      // Deleted new element and show updated element
+      const editedBody = postElement.querySelector('textarea')
+      postBody.textContent = editedBody.value
+      postBody.style.display = ""
+      editedBody.remove()
+      button.textContent = 'Edit';
+      console.log(postId)
+
+    // Post new data to Django
+    fetch('/edit_post/', {
+      method: 'POST',
+      body: JSON.stringify({
+        body: postBody.textContent,
+        post_id: postId
       })
     })
+
+
+    }    
+
+
   }
+
+
 
   
 });

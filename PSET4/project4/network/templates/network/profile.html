@@ -31,12 +31,14 @@
         </div>
     {% endif %}
     {% for post in posts%}
-    <div class="post"> 
-        <b> {{owner}} </b>
-        <span> {{post.timestamp}} </span>
-        <p> {{post.body}} </p> 
+    <div class="post" data-post-id="{{ post.id }}"> 
+        <div>
+            <b> {{owner}} </b>
+            <span> {{post.timestamp}} </span>
+        </div>
+        <pre class="post-body" >{{post.body}}</pre> 
         {% if user.is_authenticated and user.id == owner.id%}
-            <button id="edit-post"> Edit </button>
+                <button class="edit-button" data-post-id="{{ post.id }}"> Edit </button>
         {% endif %}
     </div>
     {% endfor %}

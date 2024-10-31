@@ -7,7 +7,7 @@
         <div class="new-post">
             <h4> New post </h4>
             <form id="post-form">
-                <textarea id="post-content" name="post-content"> </textarea>
+                <textarea id="post-content" name="post-content"></textarea>
                 <button type="submit"> Post </button>
             </form>
         </div>
@@ -18,12 +18,11 @@
         <div class="post"> 
             <a href="{% url "user_profile" post.user.id %}">{{post.user}}</a>
             <span> {{post.timestamp}} </span>
-             <p>{{post.body}}</p> 
+             <pre>{{post.body}}</pre> 
         </div>
         {% endfor %}
     </div>
 
-    {% if page_data.has_next %}
     <ul class="pagination">
         {% if page_data.has_previous %}
             <a class="page-link" href="/?page={{page_data.previous_page_number}}">Previous</a>
@@ -41,11 +40,10 @@
             <a class="page-link" id="next-page" href="/?page={{page_data.next_page_number}}">Next</a>
         {% else %}
             <li class="page-item disabled">
-                <a class="page-link">Next</a>
+                <a class="page-link" >Next</a>
             </li>
         {% endif %}
     </ul>
-    {% endif %}
 
 {% endblock %}
 

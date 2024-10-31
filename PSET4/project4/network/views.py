@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -94,12 +94,18 @@ def create_post(request):
 def user_profile(request, id):
     owner = User.objects.get(pk=id)
     posts = Post.objects.filter(user=owner).order_by("-timestamp")
-    is_following = request.user.following.filter(pk=owner.id).exists()
-    return render(request, "network/profile.html",{
-        "owner": owner,
-        "posts": posts,
-        "is_following": is_following
-    })
+    if request.user.is_authenticated:
+        is_following = request.user.following.filter(pk=owner.id).exists()
+        return render(request, "network/profile.html",{
+            "owner": owner,
+            "posts": posts,
+            "is_following": is_following
+            })
+    else:
+        return render(request, "network/profile.html",{
+            "owner": owner,
+            "posts": posts
+            })
 
 @csrf_exempt
 @login_required
@@ -125,6 +131,18 @@ def following(request):
     return render(request, "network/index.html", {
         "page_data": page
     })
-    
+
+@csrf_exempt
+@login_required    
 def edit_post(request):
-    ...
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    updated_body, post_id = data["body"], data["post_id"]
+    post = Post.objects.get(id=post_id)
+    
+    post.body = updated_body
+    post.save()
+    
+    return JsonResponse({"status": "success", "body": post.body})
