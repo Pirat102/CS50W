@@ -1,12 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from .utils import paginate_queryset
 
 
 
@@ -15,12 +15,11 @@ from .models import User, Post
 
 def index(request):
     posts = Post.objects.all().order_by("-timestamp")
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
+    paginator, page = paginate_queryset(request, posts, 10)
     return render(request, "network/index.html", {
         "paginator": paginator,
-        "page_data": page
+        "page_data": page,
+        "pagination_base_url": "index"
     })
 
 
@@ -94,9 +93,7 @@ def create_post(request):
 def user_profile(request, id):
     owner = User.objects.get(pk=id)
     posts = Post.objects.filter(user=owner).order_by("-timestamp")
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
+    paginator, page = paginate_queryset(request, posts, 10)
     
     if request.user.is_authenticated:
         is_following = request.user.following.filter(pk=owner.id).exists()
@@ -134,17 +131,25 @@ def following(request, id):
     user = User.objects.filter(id=id).first()
     following_users = user.following.all()
     ## Get post where user in following_users
-    page = Post.objects.filter(user__in=following_users).order_by("-timestamp")
+    posts = Post.objects.filter(user__in=following_users).order_by("-timestamp")
+    paginator, page = paginate_queryset(request, posts, 10)
     return render(request, "network/index.html", {
-        "page_data": page
+        "page_data": page,
+        "paginator": paginator,
+        "pagination_base_url": "following",  # Named URL with user id needed
+        "user_id": user.id,  # Pass the user ID for followers view
     })
 
 def followers(request, id):
     user = User.objects.filter(id=id).first()
     followers = user.followers.all()
-    page = Post.objects.filter(user__in=followers).order_by("-timestamp")
+    posts = Post.objects.filter(user__in=followers).order_by("-timestamp")
+    paginator, page = paginate_queryset(request, posts, 10)
     return render(request, "network/index.html", {
-        "page_data": page
+        "page_data": page,
+        "paginator": paginator,
+        "pagination_base_url": "followers",  # Named URL with user id needed
+        "user_id": user.id,  # Pass the user ID for followers view
     })
 
 
