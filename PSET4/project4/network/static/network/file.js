@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('Django response:', data);
           if (data.status === "success") {
             button.innerHTML = data.is_following ? "Unfollow" : "Follow";
+            const followers = document.getElementById('followers');
+            followers.textContent = `${data.followers_count} Followers`
           } else {
               console.error("Error updating follow status");
           }
@@ -65,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   };
 
-  // Edit post
+  // Edit/Save post
   const editButtons = document.querySelectorAll('.edit-button')
   if (editButtons) {
     editButtons.forEach(button => {
@@ -115,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     }    
   }
-
+  // Like post
   const likeBtns = document.querySelectorAll('.like-btn')
   if (likeBtns) {
     likeBtns.forEach(button => {
@@ -125,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   }
 
+  // Toogle Like on user's posts
   function toogleLike(button) {
     const postId = button.getAttribute('data-post-id')
 
@@ -135,13 +138,13 @@ document.addEventListener('DOMContentLoaded', function() {
         'X-CSRFToken': getCSRFToken()
       },
     })
+    // Check if user liked post. Make interactive button and display like count
     .then(response => response.json())
     .then(data => {
       console.log('Liked!', data)
       liked = data.liked
       like_count = data.like_count
 
-      
       button.innerHTML = liked ? '<i class="bi bi-heart-fill"></i>' : '<i class="bi bi-heart"></i>'
       
       const likeCountElement = document.querySelector(`.like-count[data-post-id='${postId}']`)

@@ -5,7 +5,7 @@
 <div class="profile">
     <h3 class="username"> {{owner}} </h3>
     <a href="{% url 'following' owner.id %}"> {{owner.following.count}} Following </a>
-    <a href="{% url 'followers' owner.id %}">{{owner.followers.count}} Followers </a>
+    <a id="followers" href="{% url 'followers' owner.id %}">{{owner.followers.count}} Followers </a>
     {% if user.is_authenticated and user.id != owner.id%}
         <button id="follow" data-user-id={{owner.id}}>
             {% if is_following %} Unfollow {% else %} Follow {% endif %}

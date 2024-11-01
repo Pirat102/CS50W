@@ -124,7 +124,7 @@ def is_following(request, id):
         user.following.add(id)
         is_following = True
     
-    return JsonResponse({"status": "success","is_following": is_following})
+    return JsonResponse({"status": "success","is_following": is_following, "followers_count": user.following.count()})
 
 def following(request, id):
     user = User.objects.filter(id=id).first()
