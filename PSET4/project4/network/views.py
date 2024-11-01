@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -15,7 +15,7 @@ from .models import User, Post
 
 def index(request):
     posts = Post.objects.all().order_by("-timestamp")
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, "network/index.html", {
@@ -94,17 +94,23 @@ def create_post(request):
 def user_profile(request, id):
     owner = User.objects.get(pk=id)
     posts = Post.objects.filter(user=owner).order_by("-timestamp")
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    
     if request.user.is_authenticated:
         is_following = request.user.following.filter(pk=owner.id).exists()
         return render(request, "network/profile.html",{
+            "paginator": paginator,
             "owner": owner,
-            "posts": posts,
+            "page_data": page,
             "is_following": is_following
             })
     else:
         return render(request, "network/profile.html",{
+            "paginator": paginator,
             "owner": owner,
-            "posts": posts
+            "page_data": page
             })
 
 @csrf_exempt
@@ -124,13 +130,24 @@ def is_following(request, id):
     
     return JsonResponse({"status": "success","is_following": is_following})
 
-def following(request):
-    following_users = request.user.following.all()
+def following(request, id):
+    user = User.objects.filter(id=id).first()
+    following_users = user.following.all()
     ## Get post where user in following_users
-    page = Post.objects.filter(user__in=following_users).order_by("-timestamp")[:10]
+    page = Post.objects.filter(user__in=following_users).order_by("-timestamp")
     return render(request, "network/index.html", {
         "page_data": page
     })
+
+def followers(request, id):
+    user = User.objects.filter(id=id).first()
+    followers = user.followers.all()
+    page = Post.objects.filter(user__in=followers).order_by("-timestamp")
+    return render(request, "network/index.html", {
+        "page_data": page
+    })
+
+
 
 @csrf_exempt
 @login_required    
