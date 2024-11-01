@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Function to get the CSRF token from the meta tag in layout html
+  function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  }
   // Check if element exist. This is the way to handle multiple HTML files
   const postForm = document.getElementById('post-form');
   if (postForm) {
@@ -11,6 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetch('/create', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      },
       body: JSON.stringify({body: content})
     })
     .then(response => response.json())
@@ -35,7 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Clicked');
         const userId = button.getAttribute('data-user-id');
         fetch(`/is_following/${userId}`,{
-          method: 'POST'
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+          },
         })
         .then(response => response.json())
         .then(data => {
@@ -92,6 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Post new data to Django
     fetch('/edit_post/', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      },
       body: JSON.stringify({
         body: postBody.textContent,
         post_id: postId
@@ -113,7 +129,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const postId = button.getAttribute('data-post-id')
 
     fetch(`/like_post/${postId}`, {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      },
     })
     .then(response => response.json())
     .then(data => {

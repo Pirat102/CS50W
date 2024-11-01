@@ -74,7 +74,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-@csrf_exempt
+
 @login_required
 def create_post(request):
     if request.method != "POST":
@@ -93,7 +93,7 @@ def create_post(request):
 def user_profile(request, id):
     owner = User.objects.get(pk=id)
     posts = Post.objects.filter(user=owner).order_by("-timestamp")
-    paginator, page = paginate_queryset(request, posts, 10)
+    paginator, page = paginate_queryset(request, posts)
     
     if request.user.is_authenticated:
         is_following = request.user.following.filter(pk=owner.id).exists()
@@ -110,7 +110,6 @@ def user_profile(request, id):
             "page_data": page
             })
 
-@csrf_exempt
 @login_required
 def is_following(request, id):
     user = request.user
@@ -132,7 +131,7 @@ def following(request, id):
     following_users = user.following.all()
     ## Get post where user in following_users
     posts = Post.objects.filter(user__in=following_users).order_by("-timestamp")
-    paginator, page = paginate_queryset(request, posts, 10)
+    paginator, page = paginate_queryset(request, posts)
     return render(request, "network/index.html", {
         "page_data": page,
         "paginator": paginator,
@@ -144,7 +143,7 @@ def followers(request, id):
     user = User.objects.filter(id=id).first()
     followers = user.followers.all()
     posts = Post.objects.filter(user__in=followers).order_by("-timestamp")
-    paginator, page = paginate_queryset(request, posts, 10)
+    paginator, page = paginate_queryset(request, posts)
     return render(request, "network/index.html", {
         "page_data": page,
         "paginator": paginator,
@@ -154,7 +153,6 @@ def followers(request, id):
 
 
 
-@csrf_exempt
 @login_required    
 def edit_post(request):
     if request.method != "POST":
@@ -169,7 +167,6 @@ def edit_post(request):
     
     return JsonResponse({"status": "success", "body": post.body})
 
-@csrf_exempt
 @login_required  
 def like_post(request, post_id):
     if request.method != "POST":
