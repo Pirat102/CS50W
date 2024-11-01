@@ -37,8 +37,17 @@
             <span> {{post.timestamp}} </span>
         </div>
         <pre class="post-body" >{{post.body}}</pre> 
-        {% if user.is_authenticated and user.id == owner.id%}
-                <button class="edit-button" data-post-id="{{ post.id }}"> Edit </button>
+        {% if user.is_authenticated %}
+            {% if user in post.likes.all %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart-fill"></i></button>
+            {% else %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart"></i></button>
+            {% endif %}
+        {% endif %}
+    <span class="like-count" data-post-id="{{ post.id }}">{{ post.likes.count }}</span>
+
+        {% if user.is_authenticated and user.id == owner.id %}
+            <button class="edit-button" data-post-id="{{ post.id }}"> Edit </button>
         {% endif %}
     </div>
     {% endfor %}

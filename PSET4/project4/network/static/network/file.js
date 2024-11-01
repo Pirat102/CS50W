@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Deleted new element and show updated element
       const editedBody = postElement.querySelector('textarea')
       postBody.textContent = editedBody.value
-      postBody.style.display = ""
+      postBody.style.display = ''
       editedBody.remove()
       button.textContent = 'Edit';
       console.log(postId)
@@ -97,14 +97,45 @@ document.addEventListener('DOMContentLoaded', function() {
         post_id: postId
       })
     })
-
-
     }    
-
-
   }
 
+  const likeBtns = document.querySelectorAll('.like-btn')
+  if (likeBtns) {
+    likeBtns.forEach(button => {
+      button.addEventListener('click', () => {
+        toogleLike(button)
+      })
+    })
+  }
 
+  function toogleLike(button) {
+    const postId = button.getAttribute('data-post-id')
+
+    fetch(`/like_post/${postId}`, {
+      method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Liked!', data)
+      liked = data.liked
+      like_count = data.like_count
+
+      
+      button.innerHTML = liked ? '<i class="bi bi-heart-fill"></i>' : '<i class="bi bi-heart"></i>'
+      
+      const likeCountElement = document.querySelector(`.like-count[data-post-id='${postId}']`)
+      if (likeCountElement) {
+        likeCountElement.textContent = like_count
+      }
+    })
+    .catch(error => {
+      console.error('Error', error)
+    })
+
+
+    
+  }
 
   
 });

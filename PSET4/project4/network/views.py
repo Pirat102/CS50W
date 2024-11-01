@@ -146,3 +146,22 @@ def edit_post(request):
     post.save()
     
     return JsonResponse({"status": "success", "body": post.body})
+
+@csrf_exempt
+@login_required  
+def like_post(request, post_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    post = Post.objects.get(id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+    
+    return JsonResponse({"status": "success", "liked": liked, "like_count": post.likes.count()})
+    
+    
+    
