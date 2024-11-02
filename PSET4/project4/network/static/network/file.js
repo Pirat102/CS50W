@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
             button.innerHTML = data.is_following ? "Unfollow" : "Follow";
             const followers = document.getElementById('followers');
             followers.textContent = `${data.followers_count} Followers`
+
+            
           } else {
               console.error("Error updating follow status");
           }

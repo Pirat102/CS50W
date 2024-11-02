@@ -113,6 +113,7 @@ def user_profile(request, id):
 @login_required
 def is_following(request, id):
     user = request.user
+    owner = User.objects.filter(pk=id).first()
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
@@ -124,7 +125,7 @@ def is_following(request, id):
         user.following.add(id)
         is_following = True
     
-    return JsonResponse({"status": "success","is_following": is_following, "followers_count": user.following.count()})
+    return JsonResponse({"status": "success","is_following": is_following, "followers_count": owner.followers.count()})
 
 def following(request, id):
     user = User.objects.filter(id=id).first()

@@ -17,7 +17,7 @@
     {% for post in page_data%}
     <div class="post" data-post-id="{{ post.id }}"> 
         <a href="{% url "user_profile" post.user.id %}">{{post.user}}</a>
-        <span> {{post.timestamp}} </span>
+        <span class="timestamp"> {{post.timestamp}} </span>
         <pre>{{post.body}}</pre> 
         
         {% if user.is_authenticated %}
@@ -27,7 +27,7 @@
                 <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart"></i></button>
             {% endif %}
         {% else %}
-        <button id="like-btn-disabled" class="like-btn" disabled ><i class="bi bi-heart-fill"></i></button>
+        <button id="like-btn-disabled" class="like-btn" disabled data-tooltip="You must be logged in"><i class="bi bi-heart-fill"></i></button>
         {% endif %}
         <span class="like-count" data-post-id="{{ post.id }}">{{ post.likes.count }}</span>
     </div>
