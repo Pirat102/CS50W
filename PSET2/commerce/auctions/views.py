@@ -83,7 +83,7 @@ def create(request):
         
         ## Assign Category object to a variable
         if category != "":
-            category_name = Category.objects.get(category=category)
+            category_name = Category.objects.get(id=category)
         else:
             category_name = None
         
@@ -107,7 +107,7 @@ def create(request):
 
 def auction(request, id):
     auction = AuctionListing.objects.get(id = id)
-    comments = Comment.objects.all()
+    comments = Comment.objects.filter(listing=auction)
     
     min_price = round(auction.price +1, 2)
     
