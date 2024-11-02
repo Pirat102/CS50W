@@ -1,3 +1,5 @@
+
+
 button:disabled {
     position:relative;
 }
@@ -22,3 +24,34 @@ button:disabled:hover::after {
     visibility: visible;
 }
 
+.post{
+    border-top: 1px solid;
+    padding: 5px;
+    margin: 5px
+}
+.post-container{
+    margin-left: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#post-form{
+    display:flex
+}
+
+.profile{
+    margin-left: 5px;
+}
+
+.profile-info{
+    display: flex;
+}
+#follow{
+    margin-left: 10px;
+}
+.follow-info{
+    margin-left: -25px
+}
+.timestamp{
+    font-size: small;
+}
