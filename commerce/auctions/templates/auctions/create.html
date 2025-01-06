@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <form method="POST">
+        {% csrf_token %} 
+        <div class="mb-3">
+        <label for="title" class="form-label" >Title</label>
+        <input type="title" name="title" class="form-control" id="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" name="description" id="description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+        <label for="url" class="form-label">Image url</label>
+        <input type="text" name="photo" class="form-control" id="url">
+        </div>
+        <select name="category" class="form-select form-select-lg mb-3">
+            <option value="" selected>Choose a category</option>
+            {% for category in categories %}
+                <option value={{category.id}}>{{category}}</option>
+            {%endfor%}
+        </select> <br></br>
+        
+        <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input type="number" min="1" name="price" step="0.50" class="form-control" placeholder="$1.00" required>
+          </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

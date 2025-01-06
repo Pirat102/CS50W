@@ -1,0 +1,9 @@
+body {
+    padding: 10px;
+}
+.custom-img {
+    width: 100%;  /* Make the image take the full width of the card */
+    height: 200px;  /* Set a specific height for the images */
+    object-fit: cover;  /* Ensure the image covers the area without distortion */
+    object-position: center;  /* Center the image within the specified area */
+}

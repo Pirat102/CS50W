@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+{% load custom_filters %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <form method="GET">
+        <select name="category" class="form-select form-select-lg mb-3">
+            <option value="" selected>Choose a category</option>
+            {% for category in categories %}
+                <option value={{category.id}}>{{category}}</option>
+            {%endfor%}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+      
+    <div class="container">
+        <div class="row">
+            {% for auction in auctions %}
+                <div class="col-12 col-md-6 col-lg-4 mb-3" >  
+                    <div class="card h-100 text-center " >
+                        <img src="{{ auction.photo }}" class="card-img-top custom-img" alt="{{ auction.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ auction.title }}</h5>
+                            <p class="card-text">{{ auction.description|first_sentence }}</p>
+                            <div class="mt-auto"> 
+                                {%if auction.bid%}
+                                <p class="card-text"><b>${{ auction.bid.bid }}</b></p>
+                                {%else%}
+                                <p class="card-text"><b>${{ auction.price }}</b></p>
+                                {% endif %}
+                                <a href={% url 'auction' auction.id %} class="btn btn-primary">Open listing</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

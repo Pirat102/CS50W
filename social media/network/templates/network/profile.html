@@ -1,0 +1,87 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="profile">
+    <div class=profile-info>
+        <h3 class="username"> {{owner}} </h3>
+        {% if user.is_authenticated and user.id != owner.id%}
+            <button class="btn btn-outline-primary btn-sm" id="follow" data-user-id={{owner.id}}>
+                {% if is_following %} Unfollow {% else %} Follow {% endif %}
+            </button>
+        {% elif not user.is_authenticated %}
+            <button disabled data-tooltip="You must be logged in"> Follow </button>
+        {% endif %}
+    </div>
+    <ul class="follow-info">
+        <li><a href="{% url 'following' owner.id %}"> {{owner.following.count}} Following </a></li>
+        <li><a id="followers" href="{% url 'followers' owner.id %}">{{owner.followers.count}} Followers </a> </li>
+    </ul>
+
+</div>
+
+
+<div class="feed">
+    {% if user.is_authenticated and user.id == owner.id%}
+        <div class="post-container">
+            <div class="new-post">
+                <h4> New post </h4>
+                <form id="post-form">
+                    <textarea rows="3" cols="40" id="post-content" name="post-content"></textarea>
+                    <button class="btn btn-outline-secondary" type="submit"> Post </button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    {% for post in page_data%}
+    <div class="post" data-post-id="{{ post.id }}"> 
+        <div>
+            <b> {{owner}} </b>
+            <span class="timestamp"> {{post.timestamp}} </span>
+        </div>
+        <pre class="post-body" >{{post.body}}</pre> 
+        {% if user.is_authenticated %}
+            {% if user in post.likes.all %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart-fill"></i></button>
+            {% else %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart"></i></button>
+            {% endif %}
+        {% else %}
+            <button id="like-btn-disabled" class="like-btn" disabled data-tooltip="You must be logged in"><i class="bi bi-heart-fill"></i></button>
+        {% endif %}
+    <span class="like-count" data-post-id="{{ post.id }}">{{ post.likes.count }}</span>
+
+        {% if user.is_authenticated and user.id == owner.id %}
+            <button class="edit-button" data-post-id="{{ post.id }}"> Edit </button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<ul class="pagination">
+    {% if page_data.has_previous %}
+        <a class="page-link" href="/user/{{owner.id}}/?page={{page_data.previous_page_number}}">Previous</a>
+    {% else %}   
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1">Previous</a>
+    </li>
+    {% endif %}
+
+    {% for page in paginator.page_range %}
+        <li class="page-item"><a class="page-link" href="/user/{{owner.id}}/?page={{page}}">{{page}}</a></li>
+    {% endfor %}
+    
+    {% if page_data.has_next %}
+        <a class="page-link" id="next-page" href="/user/{{owner.id}}/?page={{page_data.next_page_number}}">Next</a>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" >Next</a>
+        </li>
+    {% endif %}
+</ul>
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/file.js' %}?v={% now 'U' %}"></script>
+{% endblock %}

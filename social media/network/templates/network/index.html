@@ -1,0 +1,64 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if user.is_authenticated %}
+    <div class="post-container">
+        <div class="new-post">
+            <h4> New post </h4>
+            <form id="post-form">
+                <textarea rows="3" cols="40" id="post-content" placeholder="What is happening?!" name="post-content"></textarea>
+                <button class="btn btn-outline-secondary" type="submit"> Post </button>
+            </form>
+        </div>
+    </div>
+{% endif %}
+<div class="feed">
+    {% for post in page_data%}
+    <div class="post" data-post-id="{{ post.id }}"> 
+        <a href="{% url "user_profile" post.user.id %}">{{post.user}}</a>
+        <span class="timestamp"> {{post.timestamp}} </span>
+        <pre>{{post.body}}</pre> 
+        
+        {% if user.is_authenticated %}
+            {% if user in post.likes.all %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart-fill"></i></button>
+            {% else %}
+                <button class="like-btn" data-post-id="{{ post.id }}"><i class="bi bi-heart"></i></button>
+            {% endif %}
+        {% else %}
+        <button id="like-btn-disabled" class="like-btn" disabled data-tooltip="You must be logged in"><i class="bi bi-heart-fill"></i></button>
+        {% endif %}
+        <span class="like-count" data-post-id="{{ post.id }}">{{ post.likes.count }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<ul class="pagination">
+    {% if page_data.has_previous %}
+        <a class="page-link" href="{% if user_id %}{% url pagination_base_url user_id %}{% else %}{% url pagination_base_url %}{% endif %}?page={{page_data.previous_page_number}}">Previous</a>
+    {% else %}   
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1">Previous</a>
+    </li>
+    {% endif %}
+
+    {% for page in paginator.page_range %}
+        <li class="page-item"><a class="page-link" href="{% if user_id %}{% url pagination_base_url user_id %}{% else %}{% url pagination_base_url %}{% endif %}?page={{page}}">{{page}}</a></li>
+    {% endfor %}
+    
+    {% if page_data.has_next %}
+        <a class="page-link" id="next-page" href="{% if user_id %}{% url pagination_base_url user_id %}{% else %}{% url pagination_base_url %}{% endif %}?page={{page_data.next_page_number}}">Next</a>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" >Next</a>
+        </li>
+    {% endif %}
+</ul>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/file.js' %}?v={% now 'U' %}"></script>
+    
+{% endblock %}
